@@ -16,3 +16,5 @@ import webpacklogo from '../assets/image/webpack-logo.png'
 }
 
 // module.exports = saludar;
+
+// este es un comun comentario
