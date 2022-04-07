@@ -10,4 +10,21 @@ export class Todo{
         this.#completado = false;
         this.#creado = new Date();
     }
+
+    get getTarea(){
+        return this.#tarea;
+    }
+    get getCompletado(){
+        return this.#completado;
+    }
+
+    get getCreado(){
+        return this.#creado;
+    }
+    get getId(){
+        return this.#id;
+    }
+    set setCompletado(completado){
+        this.#completado = completado
+    }
 }

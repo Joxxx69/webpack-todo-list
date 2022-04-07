@@ -1,18 +1,78 @@
-import '../css/componentes.css'
-import webpacklogo from '../assets/image/webpack-logo.png'
- export const saludar = (nombre)=>{
-    console.log('creando etiqueta h1');
+import {Todo} from '../classes/index.class'
+import { todolist } from '../index';
 
-    const h1 = document.createElement('h1');
-    h1.innerText = `Hola, ${nombre}`;
+// Referencias en el HTML
+const divTodoList = document.querySelector('.todo-list');
+const txtInput = document.querySelector('.new-todo');
+const btnBorrar = document.querySelector('.clear-completed');
 
-    document.body.append(h1);
 
-    console.log(webpacklogo)
-    const img = document.createElement('img');
-    img.src = webpacklogo;
+export const  crearTodoHtml =(todo)=>{
 
-    document.body.append(img);
+    const htmlTodo = (`
+        <li class="${(todo.getCompletado)? 'completed':''}" data-id="${todo.getId}">
+            <div class="view">
+                <input class="toggle" type="checkbox" ${(todo.getCompletado)?'checked':''}>
+                <label>${todo.getTarea} </label>
+                <button class="destroy"></button>
+            </div>
+            <input class="edit" value="Create a TodoMVC template">
+        </li>
+    `);
+
+    const div = document.createElement('div');
+    div.innerHTML = htmlTodo;
+
+    divTodoList.append(div.firstElementChild);
+
+    return div.firstElementChild;
+
 }
 
-// module.exports = saludar;
+//Eventos
+
+txtInput.addEventListener('keyup',(e)=>{
+    if(e.code === 'Enter' && txtInput.value.length > 0){
+        console.log(txtInput.value);
+        const nuevoTodo = new Todo(txtInput.value);
+        todolist.nuevoTodo(nuevoTodo);
+        crearTodoHtml(nuevoTodo);
+        txtInput.value = '';
+    }
+});
+
+divTodoList.addEventListener('click',(e)=>{
+    console.log(e.target.localName);
+    const nombreElemento = e.target.localName;
+    const todoElemento = e.target.parentElement.parentElement;
+    const todoId = todoElemento.getAttribute('data-id');
+
+    console.log('todo id: ', todoId)
+    console.log('todo Elemento: ',todoElemento)
+
+    if(nombreElemento.includes('input')){
+        todolist.marcarCompletado(todoId);
+        todoElemento.classList.toggle('completed');
+    }else if(nombreElemento.includes('button')){
+        todolist.eliminarTodoOne(todoId);
+        divTodoList.removeChild(todoElemento);
+    }    
+});
+
+btnBorrar.addEventListener('click',()=>{
+    todolist.eliminarCompletados();
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
