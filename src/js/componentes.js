@@ -5,15 +5,17 @@ import { todolist } from '../index';
 const divTodoList = document.querySelector('.todo-list');
 const txtInput = document.querySelector('.new-todo');
 const btnBorrar = document.querySelector('.clear-completed');
+const ulListaFiltros = document.querySelector('.filters');
+const anchorFiltros = document.querySelectorAll('.filtro');
 
 
 export const  crearTodoHtml =(todo)=>{
 
     const htmlTodo = (`
-        <li class="${(todo.getCompletado)? 'completed':''}" data-id="${todo.getId}">
+        <li class="${((todo.getCompletado)? 'completed':'')|| ((todo.completado)?'completed':'')}" data-id="${todo.getId || todo.id}">
             <div class="view">
-                <input class="toggle" type="checkbox" ${(todo.getCompletado)?'checked':''}>
-                <label>${todo.getTarea} </label>
+                <input class="toggle" type="checkbox" ${((todo.getCompletado)?'checked':'')||(todo.completado)?'checked':''}>
+                <label>${todo.getTarea || todo.tarea} </label>
                 <button class="destroy"></button>
             </div>
             <input class="edit" value="Create a TodoMVC template">
@@ -33,9 +35,9 @@ export const  crearTodoHtml =(todo)=>{
 
 txtInput.addEventListener('keyup',(e)=>{
     if(e.code === 'Enter' && txtInput.value.length > 0){
-        console.log(txtInput.value);
         const nuevoTodo = new Todo(txtInput.value);
-        todolist.nuevoTodo(nuevoTodo);
+        const {getTarea,getId,getCompletado,getCreado} = nuevoTodo;
+        todolist.nuevoTodo({tarea:getTarea, id:getId, completado:getCompletado, creado:getCreado});
         crearTodoHtml(nuevoTodo);
         txtInput.value = '';
     }
@@ -46,24 +48,61 @@ divTodoList.addEventListener('click',(e)=>{
     const nombreElemento = e.target.localName;
     const todoElemento = e.target.parentElement.parentElement;
     const todoId = todoElemento.getAttribute('data-id');
-
-    console.log('todo id: ', todoId)
-    console.log('todo Elemento: ',todoElemento)
-
     if(nombreElemento.includes('input')){
         todolist.marcarCompletado(todoId);
         todoElemento.classList.toggle('completed');
     }else if(nombreElemento.includes('button')){
         todolist.eliminarTodoOne(todoId);
         divTodoList.removeChild(todoElemento);
-    }    
+    } 
+    console.log(todolist)   
 });
 
 btnBorrar.addEventListener('click',()=>{
     todolist.eliminarCompletados();
+    for(let i = divTodoList.children.length -1; i>=0; i--){
+        const  elemento = divTodoList.children[i];
+
+        if(elemento.classList.contains('completed')){
+            divTodoList.removeChild(elemento);
+        }
+
+    }
 })
 
+ulListaFiltros.addEventListener('click',(e)=>{
+    console.log(e.target.text);
+    const filtro = e.target.text;
+    if(!filtro){return;}
 
+    anchorFiltros.forEach(elemento => elemento.classList.remove('selected'));
+    e.target.classList.add('selected');
+
+    console.log(e.target)
+
+    for (const elemento of divTodoList.children) {
+        elemento.classList.remove('hidden');
+        const completado = elemento.classList.contains('completed');   
+        switch (filtro) {
+            case 'Pendientes':
+                if(completado){
+                    elemento.classList.add('hidden');
+                }
+                break;
+            case 'Completados':
+                if(!completado){
+                    elemento.classList.add('hidden');
+                }
+                break;
+            default:
+                break;
+        }
+        
+        
+    }
+
+
+});
 
 
 

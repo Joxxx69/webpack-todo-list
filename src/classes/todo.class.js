@@ -1,5 +1,14 @@
 import {v4 as uuidv4} from 'uuid';
 export class Todo{
+    static fromJson({id,tarea,completado,creado}){
+        const tempTodo = new Todo(tarea);
+        tempTodo.setTarea =tarea;
+        tempTodo.setId = id;
+        tempTodo.setCompletado = completado;
+        tempTodo.setCreado = creado;
+
+        return tempTodo;
+    }
     #tarea='';
     #id='';
     #completado='';
@@ -17,7 +26,6 @@ export class Todo{
     get getCompletado(){
         return this.#completado;
     }
-
     get getCreado(){
         return this.#creado;
     }
@@ -26,5 +34,14 @@ export class Todo{
     }
     set setCompletado(completado){
         this.#completado = completado
+    }
+    set setTarea(tarea){
+        this.#tarea = tarea;
+    }
+    set setId(id){
+        this.#id = id
+    }
+    set setCreado(creado){
+        this.#creado = creado;
     }
 }
